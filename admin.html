@@ -1,0 +1,55 @@
+<!-- admin.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h1 class="text-3xl font-bold mb-4">User Locations</h1>
+    <div class="overflow-x-auto">
+      <table class="table-auto w-full border-collapse border border-gray-800">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="px-4 py-2">Socket ID</th>
+            <th class="px-4 py-2">Latitude</th>
+            <th class="px-4 py-2">Longitude</th>
+            <th class="px-4 py-2">Device</th>
+          </tr>
+        </thead>
+        <tbody id="userLocations"></tbody>
+      </table>
+    </div>
+
+    <script src="/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      socket.on("connect", () => {
+        console.log("Connected to server");
+      });
+
+      socket.on("userLocations", (data) => {
+        const userLocationsList = document.getElementById("userLocations");
+        userLocationsList.innerHTML = "";
+        Object.keys(data).forEach((socketId) => {
+          const location = data[socketId];
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="border px-4 py-2">${socketId}</td>
+            <td class="border px-4 py-2">${location.latitude}</td>
+            <td class="border px-4 py-2">${location.longitude}</td>
+            <td class="border px-4 py-2">${location.userAgent}</td>
+          `;
+          userLocationsList.appendChild(row);
+        });
+      });
+    </script>
+  </body>
+</html>
